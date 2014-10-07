@@ -15,19 +15,30 @@ public class AnswerDao {
 
 	public void insert(Answer answer) throws SQLException {
 		Connection con = null;
-		PreparedStatement pstmt = null;
+		PreparedStatement answerPstmt = null;
+		PreparedStatement questionPstmt = null;
 		try {
 			con = ConnectionManager.getConnection();
 			String sql = "INSERT INTO ANSWERS (writer, contents, createdDate, questionId) VALUES (?, ?, ?, ?)";
-			pstmt = con.prepareStatement(sql);
-			pstmt.setString(1, answer.getWriter());
-			pstmt.setString(2, answer.getContents());
-			pstmt.setTimestamp(3, new Timestamp(answer.getTimeFromCreateDate()));
-			pstmt.setLong(4, answer.getQuestionId());
-			pstmt.executeUpdate();
+			answerPstmt = con.prepareStatement(sql);
+			answerPstmt.setString(1, answer.getWriter());
+			answerPstmt.setString(2, answer.getContents());
+			answerPstmt.setTimestamp(3, new Timestamp(answer.getTimeFromCreateDate()));
+			answerPstmt.setLong(4, answer.getQuestionId());
+			answerPstmt.executeUpdate();
+			
+			sql = "UPDATE QUESTIONS SET countOfComment = countOfComment + 1 WHERE questionId = ?";
+			questionPstmt = con.prepareStatement(sql);
+			questionPstmt.setLong(1, answer.getQuestionId());
+			questionPstmt.executeUpdate();
+			
 		} finally {
-			if (pstmt != null) {
-				pstmt.close();
+			if (answerPstmt != null) {
+				answerPstmt.close();
+			}
+			
+			if (questionPstmt != null) {
+				questionPstmt.close();
 			}
 
 			if (con != null) {

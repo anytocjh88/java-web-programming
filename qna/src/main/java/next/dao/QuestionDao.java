@@ -12,7 +12,7 @@ import next.model.Question;
 import next.support.db.ConnectionManager;
 
 public class QuestionDao {
-
+	
 	public void insert(Question question) throws SQLException {
 		Connection con = null;
 		PreparedStatement pstmt = null;
@@ -25,7 +25,6 @@ public class QuestionDao {
 			pstmt.setString(3, question.getContents());
 			pstmt.setTimestamp(4, new Timestamp(question.getTimeFromCreateDate()));
 			pstmt.setInt(5, question.getCountOfComment());
-
 			pstmt.executeUpdate();
 		} finally {
 			if (pstmt != null) {
